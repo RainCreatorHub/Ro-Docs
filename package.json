@@ -1,0 +1,26 @@
+{
+  "name": "ro-docs",
+  "version": "1.0.0",
+  "description": "Ro Docs - A modern documentation site built with Fumadocs",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "next": "^14.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "fumadocs-core": "^12.0.0",
+    "fumadocs-ui": "^12.0.0",
+    "fumadocs-mdx": "^12.0.0",
+    "next-mdx-remote": "^4.4.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0"
+  }
+}
