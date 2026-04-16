@@ -13,20 +13,29 @@
 
     <main>
         <div id="auth-section">
-            <h1>Gerenciador de Arquivos</h1>
-            <div class="form-container">
+            <div id="login-container">
                 <form id="login-form">
-                    <h2>Login</h2>
+                    <h1>Bem-vindo de volta</h1>
+                    <p class="subtitle">Faça login para continuar.</p>
+                    <label for="login-email">E-mail</label>
                     <input type="email" id="login-email" placeholder="seu@email.com" required>
+                    <label for="login-password">Senha</label>
                     <input type="password" id="login-password" placeholder="Sua senha" required>
                     <button type="submit">Entrar</button>
+                    <p class="switch-form-text">Não tem uma conta? <a href="#" id="show-signup">Cadastre-se</a></p>
                 </form>
+            </div>
 
+            <div id="signup-container" class="hidden">
                 <form id="signup-form">
-                    <h2>Criar Conta</h2>
+                    <h1>Crie sua Conta</h1>
+                    <p class="subtitle">É rápido e fácil.</p>
+                    <label for="signup-email">E-mail</label>
                     <input type="email" id="signup-email" placeholder="seu@email.com" required>
+                    <label for="signup-password">Senha</label>
                     <input type="password" id="signup-password" placeholder="Crie uma senha forte" required>
-                    <button type="submit">Cadastrar</button>
+                    <button type="submit">Criar Conta</button>
+                    <p class="switch-form-text">Já tem uma conta? <a href="#" id="show-login">Faça login</a></p>
                 </form>
             </div>
             <div id="auth-status" class="status"></div>
@@ -40,16 +49,12 @@
             
             <div class="upload-section">
                 <h2>Fazer Novo Upload</h2>
-                
                 <label for="file-input">Arquivo (.apk, .apks, .xapk)</label>
                 <input type="file" id="file-input" accept=".apk,.apks,.xapk" required>
-                
                 <label for="apk-version">Versão</label>
                 <input type="text" id="apk-version" placeholder="Ex: 2.1.3" required>
-                
                 <label for="apk-description">Descrição</label>
                 <textarea id="apk-description" placeholder="Correções de bugs e melhorias de performance." rows="3"></textarea>
-                
                 <button id="upload-button">Enviar Arquivo</button>
                 <div id="upload-status" class="status"></div>
             </div>
