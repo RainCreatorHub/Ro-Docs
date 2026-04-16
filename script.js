@@ -122,7 +122,7 @@ async function listFiles() {
         li.innerHTML = `
             <div class="file-info">
                 <strong class="file-name">${apk.name}</strong>
-                <span class="file-version">Versão: ${apk.version}</span>
+                <span class="file-version">v${apk.version}</span>
                 <p class="file-description">${apk.description || 'Sem descrição'}</p>
                 <span class="file-date">Atualizado em: ${new Date(apk.last_updated).toLocaleDateString('pt-BR')}</span>
             </div>
