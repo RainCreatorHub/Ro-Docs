@@ -5,8 +5,12 @@ const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const authSection = document.getElementById('auth-section');
 const fileManagerSection = document.getElementById('file-manager-section');
+const loginContainer = document.getElementById('login-container');
+const signupContainer = document.getElementById('signup-container');
 const loginForm = document.getElementById('login-form');
 const signupForm = document.getElementById('signup-form');
+const showSignupLink = document.getElementById('show-signup');
+const showLoginLink = document.getElementById('show-login');
 const authStatus = document.getElementById('auth-status');
 const logoutButton = document.getElementById('logout-button');
 const fileInput = document.getElementById('file-input');
@@ -18,23 +22,40 @@ const apkDescriptionInput = document.getElementById('apk-description');
 
 const BUCKET_NAME = 'apk-files';
 
-function showFileManager() {
-    authSection.classList.add('hidden');
-    fileManagerSection.classList.remove('hidden');
-    listFiles();
+function switchAuthView(show) {
+    authStatus.textContent = '';
+    if (show === 'signup') {
+        loginContainer.classList.add('hidden');
+        signupContainer.classList.remove('hidden');
+    } else {
+        signupContainer.classList.add('hidden');
+        loginContainer.classList.remove('hidden');
+    }
 }
 
-function showAuth() {
-    authSection.classList.remove('hidden');
-    fileManagerSection.classList.add('hidden');
+function showSection(sectionToShow) {
+    const sectionToHide = sectionToShow === authSection ? fileManagerSection : authSection;
+    sectionToHide.classList.add('fade-out');
+    setTimeout(() => {
+        sectionToHide.classList.add('hidden');
+        sectionToHide.classList.remove('fade-out');
+        sectionToShow.classList.remove('hidden');
+    }, 300);
 }
+
+showSignupLink.addEventListener('click', (e) => { e.preventDefault(); switchAuthView('signup'); });
+showLoginLink.addEventListener('click', (e) => { e.preventDefault(); switchAuthView('login'); });
 
 signupForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = document.getElementById('signup-email').value;
     const password = document.getElementById('signup-password').value;
     const { error } = await supabase.auth.signUp({ email, password });
-    authStatus.textContent = error ? `Erro: ${error.message}` : 'Cadastro realizado! Verifique seu e-mail (se habilitado).';
+    authStatus.textContent = error ? `Erro: ${error.message}` : 'Cadastro realizado! Faça o login para continuar.';
+    if (!error) {
+        signupForm.reset();
+        switchAuthView('login');
+    }
 });
 
 loginForm.addEventListener('submit', async (e) => {
@@ -43,50 +64,41 @@ loginForm.addEventListener('submit', async (e) => {
     const password = document.getElementById('login-password').value;
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) authStatus.textContent = `Erro: ${error.message}`;
-    else showFileManager();
+    else {
+        loginForm.reset();
+        showSection(fileManagerSection);
+        listFiles();
+    }
 });
 
 logoutButton.addEventListener('click', async () => {
     await supabase.auth.signOut();
-    showAuth();
+    showSection(authSection);
 });
 
 uploadButton.addEventListener('click', async () => {
     const file = fileInput.files[0];
     const version = apkVersionInput.value;
     const description = apkDescriptionInput.value;
-
     if (!file || !version) {
         uploadStatus.textContent = 'Por favor, preencha o arquivo e a versão.';
         return;
     }
-
     uploadStatus.textContent = 'Enviando arquivo...';
     uploadButton.disabled = true;
-
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
         uploadStatus.textContent = 'Usuário não autenticado. Faça login novamente.';
         uploadButton.disabled = false;
         return;
     }
-
     const { error: storageError } = await supabase.storage.from(BUCKET_NAME).upload(file.name, file, { upsert: false });
-
     if (storageError) {
         uploadStatus.textContent = `Erro no upload: ${storageError.message}`;
         uploadButton.disabled = false;
         return;
     }
-
-    const { error: dbError } = await supabase.from('apks').insert({
-        name: file.name,
-        description: description,
-        version: version,
-        user_id: user.id,
-        last_updated: new Date().toISOString()
-    });
-
+    const { error: dbError } = await supabase.from('apks').insert({ name: file.name, description: description, version: version, user_id: user.id, last_updated: new Date().toISOString() });
     if (dbError) {
         uploadStatus.textContent = `Erro ao salvar metadados: ${dbError.message}`;
         await supabase.storage.from(BUCKET_NAME).remove([file.name]);
@@ -102,9 +114,7 @@ uploadButton.addEventListener('click', async () => {
 
 async function listFiles() {
     fileList.innerHTML = '<li>Carregando arquivos...</li>';
-    
     const { data, error } = await supabase.from('apks').select('*').order('created_at', { ascending: false });
-
     if (error) {
         fileList.innerHTML = `<li>Erro ao carregar: ${error.message}</li>`;
         return;
@@ -113,24 +123,12 @@ async function listFiles() {
         fileList.innerHTML = '<li>Nenhum arquivo encontrado.</li>';
         return;
     }
-
     fileList.innerHTML = '';
     data.forEach(apk => {
         const { data: urlData } = supabase.storage.from(BUCKET_NAME).getPublicUrl(apk.name);
         const li = document.createElement('li');
         li.classList.add('file-item');
-        li.innerHTML = `
-            <div class="file-info">
-                <strong class="file-name">${apk.name}</strong>
-                <span class="file-version">v${apk.version}</span>
-                <p class="file-description">${apk.description || 'Sem descrição'}</p>
-                <span class="file-date">Atualizado em: ${new Date(apk.last_updated).toLocaleDateString('pt-BR')}</span>
-            </div>
-            <div class="file-actions">
-                <a href="${urlData.publicUrl}" class="action-button download" download>Baixar</a>
-                <button class="action-button delete" data-id="${apk.id}" data-name="${apk.name}">Deletar</button>
-            </div>
-        `;
+        li.innerHTML = `<div class="file-info"><strong class="file-name">${apk.name}</strong><span class="file-version">v${apk.version}</span><p class="file-description">${apk.description || 'Sem descrição'}</p><span class="file-date">Atualizado em: ${new Date(apk.last_updated).toLocaleDateString('pt-BR')}</span></div><div class="file-actions"><a href="${urlData.publicUrl}" class="action-button download" download>Baixar</a><button class="action-button delete" data-id="${apk.id}" data-name="${apk.name}">Deletar</button></div>`;
         fileList.appendChild(li);
     });
 }
@@ -139,26 +137,17 @@ fileList.addEventListener('click', async (e) => {
     if (e.target.classList.contains('delete')) {
         const apkId = e.target.dataset.id;
         const apkName = e.target.dataset.name;
-
-        const confirmed = confirm(`Tem certeza que deseja deletar o arquivo "${apkName}"? Esta ação não pode ser desfeita.`);
-        if (!confirmed) return;
-
+        if (!confirm(`Tem certeza que deseja deletar o arquivo "${apkName}"?`)) return;
         e.target.disabled = true;
         e.target.textContent = 'Deletando...';
-
         const { error: dbError } = await supabase.from('apks').delete().match({ id: apkId });
         if (dbError) {
-            alert(`Erro ao deletar informações: ${dbError.message}`);
+            alert(`Erro ao deletar: ${dbError.message}`);
             e.target.disabled = false;
             e.target.textContent = 'Deletar';
             return;
         }
-
-        const { error: storageError } = await supabase.storage.from(BUCKET_NAME).remove([apkName]);
-        if (storageError) {
-            alert(`Informações deletadas, mas houve um erro ao remover o arquivo do storage: ${storageError.message}`);
-        }
-        
+        await supabase.storage.from(BUCKET_NAME).remove([apkName]);
         e.target.closest('.file-item').remove();
     }
 });
@@ -166,8 +155,11 @@ fileList.addEventListener('click', async (e) => {
 document.addEventListener('DOMContentLoaded', async () => {
     const { data: { session } } = await supabase.auth.getSession();
     if (session) {
-        showFileManager();
+        fileManagerSection.classList.remove('hidden');
+        authSection.classList.add('hidden');
+        listFiles();
     } else {
-        showAuth();
+        authSection.classList.remove('hidden');
+        fileManagerSection.classList.add('hidden');
     }
 });
