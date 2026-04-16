@@ -1,0 +1,140 @@
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f0f2f5;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+main {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 800px;
+}
+
+h1, h2 {
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 10px;
+    margin-top: 0;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Estilos de Autenticação */
+#auth-section h1 {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.form-container {
+    display: flex;
+    gap: 40px;
+    justify-content: space-around;
+}
+
+form {
+    width: 100%;
+    max-width: 300px;
+    display: flex;
+    flex-direction: column;
+}
+
+form h2 {
+    margin-bottom: 15px;
+    font-size: 1.2em;
+}
+
+input[type="email"], input[type="password"] {
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+/* Estilos do Gerenciador */
+#file-manager-section .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+#file-manager-section .header h1 {
+    border: none;
+    margin: 0;
+}
+
+.upload-section, .download-section {
+    margin-bottom: 30px;
+}
+
+input[type="file"] {
+    margin-bottom: 15px;
+}
+
+button {
+    padding: 12px 20px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.2s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+button:disabled {
+    background-color: #a0a0a0;
+    cursor: not-allowed;
+}
+
+#logout-button {
+    background-color: #dc3545;
+}
+
+#logout-button:hover {
+    background-color: #c82333;
+}
+
+.status {
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+#file-list {
+    list-style: none;
+    padding: 0;
+}
+
+#file-list li {
+    padding: 12px;
+    border: 1px solid #ddd;
+    margin-bottom: 8px;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    word-break: break-all;
+}
+
+#file-list a {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+    white-space: nowrap;
+    margin-left: 20px;
+}
