@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Arquivos</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <main>
+        <div id="auth-section">
+            <h1>Acesse sua Conta</h1>
+            <div class="form-container">
+                <form id="login-form">
+                    <h2>Login</h2>
+                    <input type="email" id="login-email" placeholder="Seu e-mail" required>
+                    <input type="password" id="login-password" placeholder="Sua senha" required>
+                    <button type="submit">Entrar</button>
+                </form>
+
+                <form id="signup-form">
+                    <h2>Cadastro</h2>
+                    <input type="email" id="signup-email" placeholder="Crie um e-mail" required>
+                    <input type="password" id="signup-password" placeholder="Crie uma senha" required>
+                    <button type="submit">Cadastrar</button>
+                </form>
+            </div>
+            <div id="auth-status" class="status"></div>
+        </div>
+
+        <div id="file-manager-section" class="hidden">
+            <div class="header">
+                <h1>Gerenciador de Arquivos</h1>
+                <button id="logout-button">Sair</button>
+            </div>
+            
+            <div class="upload-section">
+                <h2>Fazer Upload de Arquivo</h2>
+                
+                <label for="file-input">Selecione o arquivo (.apk, .apks, .xapk)</label>
+                <input type="file" id="file-input" accept=".apk,.apks,.xapk" required>
+                
+                <label for="apk-version">Versão do App</label>
+                <input type="text" id="apk-version" placeholder="Ex: 1.0.2" required>
+                
+                <label for="apk-description">Descrição</label>
+                <textarea id="apk-description" placeholder="Descreva as novidades ou a função do app" rows="3"></textarea>
+                
+                <button id="upload-button">Enviar Arquivo</button>
+                <div id="upload-status" class="status"></div>
+            </div>
+
+            <div class="download-section">
+                <h2>Seus Arquivos</h2>
+                <ul id="file-list"></ul>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="script.js"></script>
+</body>
+</html>
